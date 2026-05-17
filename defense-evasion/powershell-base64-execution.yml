@@ -1,0 +1,32 @@
+// defense-evasion/powershell-base64-execution.yml
+title: Suspicious Base64 Encoded PowerShell Execution
+id: 0ffended-5500-fa11-dead-f1dea10ne000
+status: experimental
+description: >
+  Detects PowerShell execution with Base64 encoded commands,
+  a common technique used to obfuscate malicious payloads and
+  bypass basic command line logging. Frequently observed in
+  phishing chains and post-exploitation frameworks.
+references:
+  - https://attack.mitre.org/techniques/T1059/001/
+author: NULL
+date: 2025/06/01
+tags:
+  - attack.defense_evasion
+  - attack.execution
+  - attack.t1059.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains:
+      - '-EncodedCommand'
+      - '-enc '
+      - '-ec '
+  condition: selection
+falsepositives:
+  - Legitimate administrative scripts using encoded commands
+  - Software deployment tools (SCCM, Intune)
+level: medium
