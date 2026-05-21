@@ -1,0 +1,32 @@
+title: Kerberoasting via RC4 Kerberos Ticket Request
+id: c1ffdfc3-9dbf-4878-84f8-c75c240e4862
+status: experimental
+description: >
+  Detects Kerberoasting attacks where an adversary requests
+  Kerberos service tickets encrypted with RC4 (type 0x17)
+  for accounts with Service Principal Names registered.
+  Tickets are taken offline for password cracking and
+  commonly targets privileged service accounts.
+references:
+  - https://attack.mitre.org/techniques/T1558/003/
+  - https://adsecurity.org/?p=2293
+author: Stephen Oh
+date: 2026/05/21
+tags:
+  - attack.credential_access
+  - attack.t1558.003
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4769
+    TicketEncryptionType: '0x17'
+    TicketOptions: '0x40810000'
+  filter:
+    ServiceName|endswith: '$'
+  condition: selection and not filter
+falsepositives:
+  - Legacy applications that only support RC4 encryption
+  - Older Windows environments where AES is not configured
+level: high
